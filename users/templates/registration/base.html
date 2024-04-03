@@ -101,8 +101,7 @@
                     border-color: #0366d6;
                     outline: none;
                     box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
-                }
-                
+                }             
       }
       </style>
 
@@ -111,9 +110,9 @@
 <body>
 
    <header>
-   <nav class="navbar navbar-expand-md navbar-dark bg-dark  fixed-top">
+<nav class="navbar navbar-expand-md navbar-dark bg-light fixed-top shadow">
   <div>
-  <a class="navbar-brand" href="{% url 'store' %}"><i>ElandTickets express</i></a>
+  <a class="navbar-brand" href="{% url 'store' %}"><img class="img-fluid" style="width: 130;" src="{% static 'logo.png' %}"></a>
   </div>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -122,11 +121,11 @@
   <div class="collapse navbar-collapse" id="navbarsExample04">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="{% url 'store' %}">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link text-dark" href="{% url 'store' %}">Home <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
         <div class="form-inline my-2 my-lg-0">
-        <a class="nav-link active" href="{% url 'cart' %}">Cart</a>
+        <a class="nav-link active text-dark" href="{% url 'cart' %}">Cart</a>
         <a href="{% url 'cart' %}">
           <img  id="cart-icon" src="{% static 'img/6+cart.png' %}">
         </a>
@@ -134,13 +133,16 @@
      </div>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="{% url 'checkout' %}">Checkout</a>
+        <a class="nav-link text-dark" href="{% url 'checkout' %}">Checkout</a>
       </li>
       <li class="dropdown">
         {% if user.is_authenticated %}
-        <a class="nav-link active" href="{% url 'logout' %}">Logout</a>  
+        <form action="{% url 'logout' %}" method="post">
+          {% csrf_token %} 
+          <button class="btn btn-transparent text-dark" type="submit">Logout</button>
+        </form>  
       {% else %}
-      <a class="nav-link  active" href="{% url 'login' %}">Login</a>
+      <a class="nav-link active text-dark" href="{% url 'login' %}">Login</a>
       {% endif %}
     </li>
     </ul>

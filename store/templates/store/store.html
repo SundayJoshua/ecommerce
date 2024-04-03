@@ -7,10 +7,10 @@
 	<div class="row" style="padding-top: 60px;">
 		
 			{% for product in products %}
-			<div class="col-lg-4" style="padding-bottom: 20px;">
-				<div class="box-element">
+			<div class="col-lg-3" style="padding-bottom: 20px;">
+				<div class="">
 					<div class="cart-row">
-						<div style="flex:6"></div>
+						<div style="flex:5"></div>
 						<div style="flex:3"></div>
 						
 						<div style="flex:1"></div>
@@ -18,9 +18,9 @@
 					
 					
 					<div class="cart-row">
-						<div style="flex:6"><img class="img-fluid row-image" src="{{ product.imageURL }}"></div>
+						<div style="flex:5"><img class="img-fluid row-image" src="{{ product.imageURL }}"></div>
 						<div style="flex:3">
-							<p>{{product.name}}</p>
+							<h5>{{product.name}}</h5>
 							<p>Tsh {{product.price|floatformat:2}}</p>
 							<a type="submit" class="btn btn-sm btn-outline-success update-cart" data-product="{{product.id}}" data-action="add">Add To Cart</a>
 						</div>

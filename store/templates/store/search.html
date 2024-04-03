@@ -5,13 +5,13 @@
 <section class="container">
 	<div class="row">
 
-		<div class="col-lg-7" style="padding-top: 20px;">
+		<div class="col-lg-7" style="padding-top: 80px;">
 			
 			{% if searched %}
 				
-					<center><h3>You Searched for {{ searched }} </h3></center>					
+					<center><h5>You Searched for {{ searched }} </h5></center>					
 			<!--Tunaanza hapa-->
-				<div class="box-element">
+				<div class="">
 					<div class="cart-row">
 						<div style="flex:4"></div>
 						<div style="flex:3"><strong>Item</strong></div>
@@ -35,7 +35,7 @@
 						-->
 						</div>
 						<div>
-							<a type="submit" class="btn btn-outline-dark update-cart" data-product="{{product.id}}" data-action="add">Add To Cart</a>
+							<a type="submit" class="btn btn-outline-success update-cart" data-product="{{product.id}}" data-action="add">Add To Cart</a>
 						</div>
 					</div>	
 				</div><br/>	<br/>

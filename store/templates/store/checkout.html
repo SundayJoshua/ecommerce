@@ -91,7 +91,7 @@
 							<form class="detailsform">
 						          <div class="form-group">
 						           <div class="form-field">
-										<h5 >{{order.get_cart_total|intcomma}}</h5>
+										<h5 >Total: <span>{{order.get_cart_total|intcomma}}</span></h5>
 						            </div>
 						           <div class="form-field">
 										<h5>{{item.product.name}}</h5>
@@ -100,17 +100,17 @@
 						          <hr>
 						          <div class="form-group">
 						          	<center><small>Powered by Azampay</small></center>
-						            <button class="btn btn-danger btn-block" type="click"
+						            <button class="btn btn-warning btn-block" type="click" id="to-pay"
 									{% for item in items %} data-product="{{ item.product.name }}" {% endfor %}>
 										<h6>Continue</h6>
 									</button>
 						          </div>
 						      </form>
-							  <div>
-								<button class="btn btn-info btn-block" type="click" id="to-pay" >
+							  <!--div>
+								<button class="btn btn-info btn-block" type="click"  >
 									<h6>Continue</h6>
 								</button>
-							  </div>
+							  </div-->
 						</div>
 				    </div>
 				    </div>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/png" href="{% static 'img/favico.jpg' %}" />
 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
@@ -79,6 +80,9 @@
             border: none;
             transition: all .1s ease-in;
         }
+      .brand {
+        width: 130;
+      }
   </style>
 
 </head>
@@ -86,9 +90,9 @@
 <body>
 
    <header>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark  fixed-top">
+    <nav class="navbar navbar-expand-md navbar-dark bg-light fixed-top shadow">
       <div>
-      <a class="navbar-brand" href="{% url 'store' %}"><i>ElandTickets express</i></a>
+      <a class="navbar-brand" href="{% url 'store' %}"><img class="img-fluid brand" src="{% static 'logo.png' %}"></a>
       </div>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -97,11 +101,11 @@
       <div class="collapse navbar-collapse" id="navbarsExample04">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="{% url 'store' %}">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-link text-dark" href="{% url 'store' %}">Home <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item active">
             <div class="form-inline my-2 my-lg-0">
-            <a class="nav-link active" href="{% url 'cart' %}">Cart</a>
+            <a class="nav-link active text-dark" href="{% url 'cart' %}">Cart</a>
             <a href="{% url 'cart' %}">
               <img  id="cart-icon" src="{% static 'img/6+cart.png' %}">
             </a>
@@ -109,19 +113,22 @@
          </div>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="{% url 'checkout' %}">Checkout</a>
+            <a class="nav-link navstyle text-dark" href="{% url 'checkout' %}">Checkout</a>
           </li>
-          <li class="dropdown">
+          <li class="dropdown nav-item active">
             {% if user.is_authenticated %}
-            <a class="nav-link active" href="{% url 'logout' %}">Logout</a>  
+            <form action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-transparent text-dark" type="submit">Logout</button>
+            </form>  
           {% else %}
-          <a class="nav-link  active" href="{% url 'login' %}">Login</a>
+          <a class="nav-link  active text-dark" href="{% url 'login' %}">Login</a>
           {% endif %}
         </li>
         </ul>
-        <form class="form-inline my-2 my-sm-2" style="padding-left: 350px;" action="{% url 'search' %}" method="POST">
+        <form class="form-inline my-2 my-sm-2 element" action="{% url 'search' %}" method="POST">
           {% csrf_token %}
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="searched">
+        <input class="form-control mr-sm-2 input-sm" type="search" placeholder="Search" aria-label="Search" name="searched">
         <button class="btn btn-sm btn-outline-success my-2 my-sm-0" type="submit">Search</button>
       </form>
       </div>
