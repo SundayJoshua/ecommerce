@@ -26,7 +26,7 @@ SECRET_KEY = 'yf#=ibw=@z44t6)van+r(*1i+kxav^d*wv^ob*@=tpa+(9x@xh'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '18.188.32.19'] 
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '172.233.186.166'] 
 
 
 # Application definition
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'Ecommerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -141,3 +141,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = 'store'
 LOGOUT_REDIRECT_URL = '/login/'
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'sundayjosh07@gmail.com'  # Replace with your email address
+EMAIL_HOST_PASSWORD = '215@Noah'  # Replace with your email password
