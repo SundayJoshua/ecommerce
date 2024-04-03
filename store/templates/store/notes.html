@@ -1,0 +1,133 @@
+<a> href="{% url 'cart_add' product.id  %}" data-product="{{product.id}}">Add To Cart</a>
+
+{% url 'add_to_cart' product.id  %}
+
+<a href="{% url 'cart_add' product.id  %}" data-product="{product.id}}">Add To Cart</a>
+<div><a href="#" data-product="{{product.id}}">Add To Cart</a></div>
+
+				
+<div><a class="btn btn-outline-secondary" productId="{{item.id}}" href="{%url store.views.add_to_cart item.id%}">Add to cart</a></div>
+
+	else:
+		items = []
+		order = {'get_cart_total':0, 'get_cart_item':0}
+		cartItems = order['get_cart_item']
+
+
+ 
+
+if request.user.is_authenticated:
+		user = request.user.customer
+
+
+
+
+ 
+
+class User(AbstractUser):
+    """
+    Users within the Django authentication system are represented by this
+    model.
+
+    Username and password are required. Other fields are optional.
+    """
+    class Meta(AbstractUser.Meta):
+        swappable = 'AUTH_USER_MODEL'
+
+
+class AnonymousUser:
+    id = None
+    pk = None
+    username = ''
+    is_staff = False
+    is_active = False
+    is_superuser = False
+    _groups = EmptyManager(Group)
+    _user_permissions = EmptyManager(Permission)
+
+    def __str__(self):
+        return 'AnonymousUser'
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__)
+
+    def __hash__(self):
+        return 1  # instances always return the same hash value
+
+    def __int__(self):
+        raise TypeError('Cannot cast AnonymousUser to int. Are you trying to use it in place of User?')
+
+    def save(self):
+        raise NotImplementedError("Django doesn't provide a DB representation for AnonymousUser.")
+
+    def delete(self):
+        raise NotImplementedError("Django doesn't provide a DB representation for AnonymousUser.")
+
+    def set_password(self, raw_password):
+        raise NotImplementedError("Django doesn't provide a DB representation for AnonymousUser.")
+
+    def check_password(self, raw_password):
+        raise NotImplementedError("Django doesn't provide a DB representation for AnonymousUser.")
+
+    @property
+    def groups(self):
+        return self._groups
+
+
+
+VIEWS.PY 
+
+@login_required(login_url="/users/login")
+def cart_add(request, id):
+    cart = Cart(request)
+    product = Product.objects.get(id=id)
+    cart.add(product=product)
+    return redirect("home")
+
+
+@login_required(login_url="/users/login")
+def item_clear(request, id):
+    cart = Cart(request)
+    product = Product.objects.get(id=id)
+    cart.remove(product)
+    return redirect("cart_detail")
+
+
+@login_required(login_url="/users/login")
+def item_increment(request, id):
+    cart = Cart(request)
+    product = Product.objects.get(id=id)
+    cart.add(product=product)
+    return redirect("cart_detail")
+
+
+@login_required(login_url="/users/login")
+def item_decrement(request, id):
+    cart = Cart(request)
+    product = Product.objects.get(id=id)
+    cart.decrement(product=product)
+    return redirect("cart_detail")
+
+
+@login_required(login_url="/users/login")
+def cart_clear(request):
+    cart = Cart(request)
+    cart.clear()
+    return redirect("cart_detail")
+
+
+@login_required(login_url="/users/login")
+def cart_detail(request):
+    return render(request, 'cart/cart_detail.html')
+
+
+URLS.PY
+
+path('cart/add/<int:id>/', views.cart_add, name='cart_add'),
+    path('cart/item_clear/<int:id>/', views.item_clear, name='item_clear'),
+    path('cart/item_increment/<int:id>/',
+         views.item_increment, name='item_increment'),
+    path('cart/item_decrement/<int:id>/',
+         views.item_decrement, name='item_decrement'),
+    path('cart/cart_clear/', views.cart_clear, name='cart_clear'),
+    path('cart/cart-detail/',views.cart_detail,name='cart_detail'),

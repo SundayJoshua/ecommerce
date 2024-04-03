@@ -1,0 +1,75 @@
+var updateBtns = document.getElementsByTagName('update-cart');
+
+for(var i = 0; i < updateBtns.length; i++){
+	updateBtns[i].addEventListener('click', function(){
+		var productId = this.dataset.product
+		var action = this.dataset.action
+		console.log('productId:', productId, 'action:', action )
+	
+		console.log('USER:', user)
+		if(user === 'AnonymousUser'){
+			console.log('Not logged in')
+		}else{
+			updateUserOrder(productId, action)
+		}
+	})
+}
+
+
+function updateUserOrder(productId, action){
+	console.log('User is logged in, sending data..')
+
+	var url = 'update_item/'
+
+	fetch(url, {
+		method:'POST',
+		headers:{
+			'Counter-Type':'application/json'
+		},
+		body:JSON.stringify({'productId', productId, 'action':action})
+	})
+
+	.then((response) =>{
+		return response.json()
+	})
+
+	.then((response) =>{
+		return response.json()
+	})
+}
+
+
+"""
+ 	.then((response) => {
+       return response.json();
+    })
+    .then((data) => {
+        location.reload()
+    });
+"""
+
+
+"""
+	data = json.loads(request.body)
+	productId = data['productId']
+	action = data['action']
+	print('Action:', action)
+	print('Product:', productId)
+
+	customer = request.user.customer
+	product = Product.objects.get(id=productId)
+	order, created = Order.objects.get_or_create(customer=customer, complete=False)
+
+
+	orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+
+	if action == 'add':
+		orderItem.quantity = (orderItem.quantity + 1)
+	elif action == 'remove':
+		orderItem.quantity = (orderItem.quantity - 1)
+
+	orderItem.save()
+
+	if orderItem.quantity <= 0:
+		orderItem.delete()
+"""

@@ -1,0 +1,376 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+{% load humanize %}
+
+<section class="container-fluid">
+     <div class="row" style="padding-top: 60px;">
+		<div class="col-lg-6">
+			<div class="box-element" id="form-wrapper">
+				<form id="form" method="POST">
+					{% csrf_token %}
+					<div id="user-info">
+						<div class="form-field">
+							<input required class="form-control" type="text" name="name" placeholder="Name..">
+						</div>
+						<div class="form-field">
+							<input required class="form-control" type="email" name="email" placeholder="Email..">
+						</div>
+					</div>
+					
+					<div id="shipping-info">
+						<hr>
+						<p>Shipping Information:</p>
+						<hr>
+						<div class="form-field">
+							<input class="form-control" type="text" name="address" placeholder="Address..">
+						</div>
+						<div class="form-field">
+							<input class="form-control" type="text" name="city" placeholder="City..">
+						</div>
+						<div class="form-field">
+							<input class="form-control" type="text" name="state" placeholder="State..">
+						</div>
+						<div class="form-field">
+							<input class="form-control" type="text" name="zipcode" placeholder="Zip code..">
+						</div>
+					</div>
+
+					<hr>
+				<input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
+				</form>
+			</div>
+					<br>
+				<div class="box-element hidden" id="payment-info">
+					<small>AzamPay options</small>
+					<button type="click" class="btn btn-warning btn-block pay-here" data-action="action" 
+					{% for item in items %} data-product="{{ item.product.name }}" {% endfor %}
+					data-toggle="modal" data-target="#exampleModal">
+						<h6 class="">Pay Now</h6>
+					</button>
+				</div>	
+		</div>
+
+
+		<div class="col-lg-6">
+			<div class="box-element">
+				<a  class="btn btn-outline-dark" href="{% url 'store' %}">&#x2190; Back to Cart</a>
+				<hr>
+				<h3>Order Summary</h3>
+				{% for item in items %}
+				<hr>
+				<div class="cart-row">
+					<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
+					<div style="flex:2"><p>{{ item.product.name }}</p></div>
+					<div style="flex:3"><small><p style="color: blue; font-size: 16px;">Tsh. {{ item.product.price|floatformat:2|intcomma }}</p></small></div>
+					<div style="flex:2"><p>{{ item.quantity }}</p></div>
+				</div>
+				{% endfor %}
+				<h5>Items:   <!--{{count.value.quantity__sum}}--> {{cartItems}}</h5>
+				<h5 style="color: blue;">
+					Total:   <!--{{result.total|floatformat:2}}-->Tsh. {{order.get_cart_total|intcomma}}
+				</h5>
+			</div>
+		</div>
+	</div>
+
+
+<!-- Modal -->
+			<div class="modal fade shadow" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header" style="background-color: darkblue;">
+				        <h5 class="modal-title text-white" id="exampleModalLabel">Pay Tsh. {{order.get_cart_total|intcomma}}</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        <!-- payment -->
+						<div >
+							<form class="detailsform">
+						          <div class="form-group">
+						           <div class="form-field">
+										<h5 >{{order.get_cart_total|intcomma}}</h5>
+						            </div>
+						           <div class="form-field">
+										<h5>{{item.product.name}}</h5>
+						            </div>
+						          </div>
+						          <hr>
+						          <div class="form-group">
+						          	<center><small>Powered by Azampay</small></center>
+						            <button class="btn btn-danger btn-block" type="click"
+									{% for item in items %} data-product="{{ item.product.name }}" {% endfor %}>
+										<h6>Continue</h6>
+									</button>
+						          </div>
+						      </form>
+							  <div>
+								<button class="btn btn-info btn-block" type="click" id="to-pay" >
+									<h6>Continue</h6>
+								</button>
+							  </div>
+						</div>
+				    </div>
+				    </div>
+				  </div>
+			</div>
+</section>
+
+<!--PAYMENT INTERGRATION-->
+<!--script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&components=buttons"></script-->
+<script>
+
+
+var doPayment = document.getElementsByClassName('pay-here')
+
+console.log(doPayment)
+
+for (var i = 0; i < doPayment.length; i++) {
+  doPayment[i].addEventListener('click', function(){
+    // var action = this.dataset.action
+    // console.log('action:', action)
+    // console.log('USER:', user)
+	var productId = this.dataset.product
+	var action = this.dataset.action
+	var orderId = this.dataset.order
+	console.log('productId', productId)
+	console.log('orderId', orderId)
+    fetchToken();
+	initPayment(productId, orderId);
+	
+
+  })
+}
+
+function fetchToken(){
+	 console.log('Payment Proccessing...')
+
+const apiUrl = 'https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken';
+	
+    fetch(apiUrl, {
+      method:'POST',
+      headers:({
+        'Content-Type':'application/json',
+        'X-CSRFToken':csrftoken,
+      }), 
+      body: JSON.stringify({"appName": "Django-Ecommerce", 
+      				   "clientId": "d19d80bd-b3c9-41b6-997e-acfdcab07a1c",
+					   "clientSecret": "J3rEI+rv3Z+rBjGCCIHgkF9mOdpEDgkQS7uUlHDgDRk9R0l+g5zsN7lydiyIKeFHpiRMXye0UJSKEh/1kczzWW6bprO077lZyQz5ZA+LKa/Kz4iRq8HtlrksfKRlE5iAeh97ILecLpGSek1BJiPNwQ7iXNKETGx4ezl9ab2Fl6j8Xsv9hhXHwGSl9j3BPnW6hDeFiyD0qg/Y5p9W0COGSeIv0is0IDMe1iC3p/DS7dSbbP86jy4e25+GglzltVJQWg4Bl4bA8V6Yqt5+G8HtJrK2Px/smNUxi2G6uXECynpI/VUy++6SOkfHqvjt44Gd8D4tFv8/2gF9ee/ibRlcse4jWvz2PbeHy3UKfloPqiI+/gsUsurl1HEIovfILX/0ADpWR5ZPeeRocbFTCyl84h9L8iXchXALcyBVQN4LEmjYE/3moG5BkTj3U7nWFwClxzaYqD8H66VTLAxFZMqYeEkFamy9QBTPdEohz+HNsz6/B2jvMCJ/XTeWxSCuz23xjPynaozOH8mZeopa4mjW7QRtbnesC2WTEKzG4BghzyVJoPtY7Vl6kCX6Z0HjTB7lxnU33EB73Q3I0tUXfFGXbLPph1eUUtV4pbPcu0sBdeCmkG7YXbeIusdOy9VcX/P2eEHPFkKgNuf1t4zS2jZhIzG7gXkaNqQhXihQ1MsWUJY=", }),
+      dataType: "json"
+    }
+    )
+    .then((response) => {
+       return response.json();
+
+    })
+    .then((data) => {
+        console.log('resp data...:', data['data']['accessToken']['expire'])
+        localStorage.setItem("accessToken", JSON.stringify(data['data']['accessToken']));
+    })
+	.catch(error => console.log(error));
+
+}
+
+function initPayment(productId) {
+
+const apiUrl = 'https://sandbox.azampay.co.tz/api/v1/Partner/PostCheckout';
+const apiUrl1 = 'https://sandbox.azampay.co.tz/api/v1/Checkout/Callback';
+
+const formEl = document.querySelector('.detailsform');
+formEl.addEventListener('click', function() {
+	event.preventDefault();
+	
+//const payload = new FormData(formEl);
+const total = '{{order.get_cart_total}}';
+var productname = '{{item.product.name}}';
+
+const payload = {
+    "appName": "Django-Ecommerce",
+    "clientId": "d19d80bd-b3c9-41b6-997e-acfdcab07a1c",
+    "vendorId": "e60b128e-46e4-4bfc-9ebb-dba3f4f877af",
+    "language": "en",
+    "currency": "TZS",
+    "externalId": "enc -aes-128-cbc -k secret -P -md sha1",
+    "requestOrigin": "https://requestorigin.org",
+    "redirectFailURL": "https://failure",
+    "redirectSuccessURL": "https://success",
+    "vendorName": "Halopesa",
+    "amount": total,
+    "cart": {
+        "items": [
+            {
+                "name": productId
+            }
+        ]
+	}   
+};
+//const data = Object.fromEntries(payload);
+
+//const accessToken = localStorage.getItem('accessToken').toString("base64");
+let retrievedObject = JSON.parse(localStorage.getItem('accessToken'));
+const apiKey = (retrievedObject);
+var responseClone;
+
+	console.log(payload)
+	console.log(apiKey)
+		
+
+	fetch(apiUrl, {
+		method: 'POST',
+		headers:{
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${apiKey}`,
+		},
+		body: JSON.stringify(payload),
+		dataType: "json"
+	})
+		
+		.then(function (response){
+			responseClone = response.clone();
+			return response.json();
+		})
+		.then(function (data){
+			console.log(data)
+		}, function (rejectionReason) {
+			console.log('Error parsing JSON from response:', rejectionReason, responseClone);
+			responseClone.text()
+			.then(function (bodyText) {
+				console.log('Received the following instead of valid JSON:', bodyText);
+				localStorage.setItem("paymentGateway", JSON.stringify(bodyText));
+			})
+		})
+		.catch(err => console.log(err));
+	})
+};
+</script>
+
+<script>
+var handlePayment = document.getElementById('to-pay').addEventListener('click', function(){
+		paymentPartner();
+		console.log('Init..payment...')
+})
+
+function paymentPartner() {
+	let retrievedObject = JSON.parse(localStorage.getItem('paymentGateway'));
+	const apiUrl = (retrievedObject);
+	
+	popupWindow = window.open(apiUrl,'popUpWindow',
+	'height=300,width=700,left=50,top=50,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes')
+	
+
+	};
+
+function callBack() {
+	const apiUrl = 'https://sandbox.azampay.co.tz/api/v1/Checkout/Callback'
+	let retrievedObject = JSON.parse(localStorage.getItem('accessToken'));
+	const apiKey = (retrievedObject);
+
+	fetch(apiUrl,{
+		headers: {
+			method : 'POST',
+			Authorization: `Bearer ${apiKey}`,
+		},
+		body: JSON.stringify({})
+	})
+};
+</script>
+
+
+
+
+
+<script type="text/javascript">
+	var shipping = '{{order.shipping}}'
+	
+
+	if(shipping == 'False'){
+		document.getElementById('shipping-info').innerHTML =''
+	}
+
+	if (user != 'AnonymousUser'){
+		document.getElementById('user-info').innerHTML ='' 
+	}
+
+	if (shipping == 'False' && user != 'AnonymousUser'){
+		//Hide entire form if user is logged and shipping is false
+		document.getElementById('form-wrapper').classList.add("hidden");
+		//Show payment if logged in user wants to buy an item that does not require shipping
+		document.getElementById('payment-info').classList.remove("hidden");
+	}
+
+
+	var form = document.getElementById('form')
+
+	csrftoken = form.getElementsByTagName("input")[0].value
+	console.log('Newtoken:', form.getElementsByTagName("input")[0].value)
+
+	form.addEventListener('submit', function(e){
+		e.preventDefault()
+		console.log('Form submitted...')
+		document.getElementById('form-button').classList.add('hidden')
+		document.getElementById('payment-info').classList.remove('hidden')
+		})
+
+	//document.getElementById('make-payment').addEventListener('click', function(e){
+	//	submitFormData() 
+	//})
+
+	function submitFormData(){
+		console.log('Payment button clicked')
+
+		var userFormData = {
+			'name':null,
+			'email':null,
+			'total':total,
+		}
+		var shippingInfo = {
+			'name':null,
+			'email':null,
+			'address':null,
+			'city':null,
+			'state':null,
+			'zipcode':null,
+		}
+
+		if(shipping != 'False'){
+			shippingInfo.name = form.name.value
+			shippingInfo.email = form.email.value
+			shippingInfo.address = form.address.value
+			shippingInfo.city = form.city.value
+			shippingInfo.state = form.state.value
+			shippingInfo.zipcode = form.zipcode.value
+		}
+
+		if(shipping == 'AnonymousUser'){
+			userFormData.name = form.name.value
+			userFormData.email = form.email.value
+		}
+
+		var url = '/process_order/'
+		fetch(url,{
+			method:'POST',
+			headers:{
+				'Content-Type':'application/json',
+				'X-CSRFToken':csrftoken,
+			},
+			body:JSON.stringify({'form':userFormData, 'shipping':shippingInfo}
+				)
+		})
+		.then((response) => response.json())
+		.then((data) => {
+			console.log('Success:', data);
+			alert('Transaction completed');
+
+		cart = {}
+       	document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+
+			window.location.href ="{% url 'store' %}"
+		})
+
+	}
+	
+</script>
+
+{% endblock content %}
