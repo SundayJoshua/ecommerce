@@ -58,7 +58,7 @@ ROOT_URLCONF = 'Ecommerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -143,9 +143,3 @@ LOGIN_REDIRECT_URL = 'store'
 LOGOUT_REDIRECT_URL = '/login/'
 
 # Email Configuration
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'sundayjosh07@gmail.com'  # Replace with your email address
-EMAIL_HOST_PASSWORD = '215@Noah'  # Replace with your email password
